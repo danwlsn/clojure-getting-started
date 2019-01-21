@@ -2,25 +2,15 @@
   (:require [compojure.core :refer [defroutes GET PUT POST DELETE ANY]]
             [compojure.handler :refer [site]]
             [compojure.route :as route]
+            [hiccup.core :refer :all]
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
-            [environ.core :refer [env]]
-            [hiccup.core :refer :all]
-            [clojure.data.csv :as csv]
-            [clojure.java.io :as io])
-  (:import [java.lang.Integer]))
-
-(defn load-wordlist-file [path-with-extension]
-  (with-open [reader (io/reader path-with-extension)]
-    (doall
-     (csv/read-csv reader))))
-
-()
+            [environ.core :refer [env]]))
 
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body (html [:h1 "Howdy, partner"])})
+   :body (html [:h1 "Howdy Partner"] [:h2 "Clojure man"])})
 
 (defroutes app
   (GET "/" []

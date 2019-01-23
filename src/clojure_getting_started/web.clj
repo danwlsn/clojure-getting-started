@@ -37,37 +37,39 @@
 (defn get-random-word []
   (get (wordlist-numbered-vec default-file-location) (get-key-from-dice)))
 
+(defn multi-dice-roll [num]
+  (repeatedly num #(get-key-from-dice)))
+
 (defn multi-random-word [num]
-  (->> (repeatedly num #(get-random-word))
-       (clojure.string/join " " )))
+  (String/join " " (map (wordlist-numbered-vec default-file-location) (multi-dice-roll num))))
 
 (defn link [math length]
-  (link-to (str "/" (math length 10)) (str (math length 10) " word password")))
+(link-to (str "/" (math length 10)) (str (math length 10) " word password")))
 
 (defn html-body [num]
-  (html
-   [:h1 "Your password is"]
-   [:h2 (multi-random-word num)]
-   [:h3 "Not the right length for you?"]
-   (if (> num 11)
-     (link - num))
-   [:br]
-   (link + num)
-   ))
+(html
+ [:h1 "Your password is"]
+ [:h2 (multi-random-word num)]
+ [:h3 "Not the right length for you?"]
+ (if (> num 11)
+   (link - num))
+ [:br]
+ (link + num)
+ ))
 
 
 (defn splash [num]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body (html-body num)})
+{:status 200
+ :headers {"Content-Type" "text/html"}
+ :body (html-body num)})
 
 (defroutes app
-  (GET "/" []
-       (splash 5))
-  (GET "/:num" [num]
-       (splash (Integer/parseInt num)))
-  (ANY "*" []
-       (route/not-found (slurp (io/resource "404.html")))))
+(GET "/" []
+     (splash 5))
+(GET "/:num" [num]
+     (splash (Integer/parseInt num)))
+(ANY "*" []
+     (route/not-found (slurp (io/resource "404.html")))))
 
 (defn -main [& [port]]
 (let [port (Integer. (or port (env :port) 5000))]
